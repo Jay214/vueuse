@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-// @ts-check
-require('esbuild-register')
-const indexes = require('../../indexes.json')
-const { currentVersion, versions } = require('../../meta/versions')
+import type { UserConfig } from 'vitepress'
+import indexes from '../../indexes.json'
+import { currentVersion, versions } from '../../meta/versions'
 
 const categoriesOrder = [
   'Browser',
@@ -17,7 +15,7 @@ const categoriesOrder = [
 ]
 
 const Guide = [
-  { text: 'Get Started', link: '/guide/index' },
+  { text: 'Getting Started', link: '/guide/index' },
   { text: 'Best Practice', link: '/guide/best-practice' },
   { text: 'Configurations', link: '/guide/config' },
   { text: 'Components', link: '/guide/components' },
@@ -48,10 +46,7 @@ const DefaultSideBar = [
 
 const FunctionsSideBar = getFunctionsSideBar()
 
-/**
- * @type {import('vitepress').UserConfig}
- */
-const config = {
+const config: UserConfig = {
   title: 'VueUse',
   description: 'Collection of essential Vue Composition Utilities',
   lang: 'en-US',
@@ -182,4 +177,4 @@ function getFunctionsSideBar() {
   return links
 }
 
-module.exports = config
+export default config

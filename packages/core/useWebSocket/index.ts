@@ -1,5 +1,6 @@
 import { ref, Ref } from 'vue-demi'
 import { Fn, tryOnScopeDispose, useIntervalFn } from '@vueuse/shared'
+import { useEventListener } from '../useEventListener'
 
 export type WebSocketStatus = 'OPEN' | 'CONNECTING' | 'CLOSED'
 
@@ -62,6 +63,13 @@ export interface WebSocketOptions {
    * @default true
    */
   immediate?: boolean
+
+  /**
+   * Automatically close a connection
+   *
+   * @default true
+   */
+  autoClose?: boolean
 
   /**
    * List of one or more sub-protocol strings
@@ -131,6 +139,7 @@ export function useWebSocket<Data = any>(
     onError,
     onMessage,
     immediate = true,
+    autoClose = true,
     protocols = [],
   } = options
 
@@ -234,13 +243,16 @@ export function useWebSocket<Data = any>(
 
   if (immediate) _init()
 
+  if (autoClose) {
+    useEventListener(window, 'beforeunload', close)
+    tryOnScopeDispose(close)
+  }
+
   const open = () => {
-    close()
+    close(1012) // Status code 1012 -> Service Restart https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent/code
     retried = 0
     _init()
   }
-
-  tryOnScopeDispose(close)
 
   return {
     data,
